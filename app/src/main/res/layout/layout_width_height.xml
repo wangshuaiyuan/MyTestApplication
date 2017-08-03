@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:wsy="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!--长宽比layout测试-->
+
+    <wsy.org.mytestapplication.view.WidthHeightWeightLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/id_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </wsy.org.mytestapplication.view.WidthHeightWeightLayout>
+
+    <!--viewpager指示器-->
+
+    <wsy.org.mytestapplication.IndicatorView
+        android:id="@+id/id_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:padding="5dp"
+        wsy:indicator_icon="@drawable/indicator_selector"
+        wsy:indicator_margin="5dp" />
+
+</RelativeLayout>

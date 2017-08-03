@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/screen_capture_whole_wrap_rl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/screen_capture_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="截屏测试" />
+
+
+    <ImageView
+        android:id="@+id/screen_capture_test_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-237dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/screen_capture_result_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/screen_capture_tv"
+        android:text="截屏测试" />
+
+
+</RelativeLayout>

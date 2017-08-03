@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <wsy.org.mytestapplication.view.ExpandableTextView
+        android:id="@+id/change_item_height_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ll_lodge_detail_desc_expanded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!--小标题1-->
+                <TextView
+                    android:id="@+id/tv_lodge_detail_desc_title1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="个性描述"
+                    android:textColor="#878787"
+                    android:textSize="13sp" />
+                <!--描述1-->
+                <TextView
+                    android:id="@+id/tv_lodge_detail_desc_content1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个"
+                    android:textColor="#323232"
+                    android:textSize="13sp" />
+                <!--小标题1-->
+                <TextView
+                    android:id="@+id/tv_lodge_detail_desc_title2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="内部情况"
+                    android:textColor="#878787"
+                    android:textSize="13sp" />
+                <!--描述2-->
+                <TextView
+                    android:id="@+id/tv_lodge_detail_desc_content2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个"
+                    android:textColor="#323232"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!--房源描述，状态-->
+            <TextView
+                android:id="@+id/tv_lodge_detail_desc_collapsed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:text="个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个性描述个"
+                android:textColor="#323232"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_lodge_detail_desc_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:src="@mipmap/detail_expand_arrow"
+            android:visibility="visible" />
+
+    </wsy.org.mytestapplication.view.ExpandableTextView>
+
+</LinearLayout>

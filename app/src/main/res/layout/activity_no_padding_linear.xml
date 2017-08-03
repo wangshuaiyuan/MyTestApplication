@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <wsy.org.mytestapplication.view.NoPaddingLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="43dp"
+        android:paddingRight="43dp">
+
+        <View
+            android:layout_width="62dp"
+            android:layout_height="20dp"
+            android:background="#323232" />
+
+        <View
+            android:layout_width="62dp"
+            android:layout_height="20dp"
+            android:background="#ff4081" />
+
+        <View
+            android:layout_width="62dp"
+            android:layout_height="20dp"
+            android:background="#323232" />
+
+        <View
+            android:layout_width="62dp"
+            android:layout_height="20dp"
+            android:background="#ff4081" />
+
+    </wsy.org.mytestapplication.view.NoPaddingLinearLayout>
+</RelativeLayout>
