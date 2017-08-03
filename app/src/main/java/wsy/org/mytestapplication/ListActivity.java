@@ -16,6 +16,7 @@ import wsy.org.mytestapplication.activity.CircleImageViewActivity;
 import wsy.org.mytestapplication.activity.EventBusActivity;
 import wsy.org.mytestapplication.activity.ExpandTextviewActivity;
 import wsy.org.mytestapplication.activity.HtmlStringTestActivity;
+import wsy.org.mytestapplication.activity.NestedTestActivity;
 import wsy.org.mytestapplication.activity.NoPaddingTestActivity;
 import wsy.org.mytestapplication.activity.PermissionTestActivity;
 import wsy.org.mytestapplication.activity.Pull2RefreshListActivity;
@@ -139,6 +140,12 @@ public class ListActivity extends Activity {
         itemBean = new DemoItemBean();
         itemBean.demoActivityClass = RegisterAndLoginActivity.class;
         itemBean.demoName = "野狗sdk测试";
+        list.add(itemBean);
+
+
+        itemBean = new DemoItemBean();
+        itemBean.demoActivityClass = NestedTestActivity.class;
+        itemBean.demoName = "nested测试";
         list.add(itemBean);
 
         return list;
