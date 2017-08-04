@@ -1,1 +1,1 @@
-include ':app', ':wilddog'
+include ':app'

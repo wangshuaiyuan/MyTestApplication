@@ -9,13 +9,13 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import im.sdk.debug.RegisterAndLoginActivity;
 import wsy.org.mytestapplication.activity.AppbarLayoutTestActivity;
 import wsy.org.mytestapplication.activity.ChangeRecyclerViewItemHeightActivity;
 import wsy.org.mytestapplication.activity.CircleImageViewActivity;
 import wsy.org.mytestapplication.activity.EventBusActivity;
 import wsy.org.mytestapplication.activity.ExpandTextviewActivity;
 import wsy.org.mytestapplication.activity.HtmlStringTestActivity;
+import wsy.org.mytestapplication.activity.LocationInWindowActivity;
 import wsy.org.mytestapplication.activity.NestedTestActivity;
 import wsy.org.mytestapplication.activity.NoPaddingTestActivity;
 import wsy.org.mytestapplication.activity.PermissionTestActivity;
@@ -138,14 +138,13 @@ public class ListActivity extends Activity {
         list.add(itemBean);
 
         itemBean = new DemoItemBean();
-        itemBean.demoActivityClass = RegisterAndLoginActivity.class;
-        itemBean.demoName = "野狗sdk测试";
-        list.add(itemBean);
-
-
-        itemBean = new DemoItemBean();
         itemBean.demoActivityClass = NestedTestActivity.class;
         itemBean.demoName = "nested测试";
+        list.add(itemBean);
+
+        itemBean = new DemoItemBean();
+        itemBean.demoActivityClass = LocationInWindowActivity.class;
+        itemBean.demoName = "getLocationInWindow测试 ";
         list.add(itemBean);
 
         return list;

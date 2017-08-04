@@ -15,7 +15,7 @@
             android:layout_height="200dp"
             android:background="#e0e0e0" />
 
-        <android.support.v4.widget.NestedScrollView
+        <wsy.org.mytestapplication.view.MyNestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -23,6 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="3000dp"
                 android:background="#ff4081" />
-        </android.support.v4.widget.NestedScrollView>
+        </wsy.org.mytestapplication.view.MyNestedScrollView>
     </wsy.org.mytestapplication.view.CustomNestedScrollingParent>
 </LinearLayout>

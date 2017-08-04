@@ -76,6 +76,10 @@ public class CustomNestedScrollingParent extends LinearLayout implements NestedS
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         Log.e("dy", dy + "");
+
+        int[] location = new int[2];
+        nestedScrollView.getLocationInWindow(location);
+
         if (dy > 0) {// 手势向上，页面上滑，加载下面的东西
             //负数表示检测上滑，正数表示下滑
             boolean b = ViewCompat.canScrollVertically(nestedScrollView, -1);
@@ -111,7 +115,6 @@ public class CustomNestedScrollingParent extends LinearLayout implements NestedS
                     }
                     scrollingChild.setLayoutParams(params);
                     consumed[1] = tempDy;
-
                 }
             }
 
@@ -120,6 +123,7 @@ public class CustomNestedScrollingParent extends LinearLayout implements NestedS
         nestedScrollView.getLocationInWindow(locationInWindow);
         Log.e("dy consumed.y", consumed[1] + "");
 
+        Log.e("dy offset", (locationInWindow[1] - location[1]) + "");
     }
 
     @Override
