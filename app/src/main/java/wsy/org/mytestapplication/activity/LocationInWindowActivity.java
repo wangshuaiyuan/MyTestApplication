@@ -6,12 +6,26 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import wsy.org.mytestapplication.R;
+import wsy.org.mytestapplication.view.MyView;
 
 /**
  * Created by wsy on 2017/8/4.
+ * <p>
+ * 现象：
+ * Resize：-----------坐标
+ * 627
+ * 627
+ * 657 after 500ms
+ * <p>
+ * scroll：-----------坐标
+ * 627
+ * 617
+ * 617after 500ms
+ * <p>
+ * Summary：
+ * requestLayout是请求layout，不一定被立即执行，所以，只有延时之后才能通过getLocationInWindow()拿到正确的数据
  */
 
 public class LocationInWindowActivity extends Activity implements View.OnClickListener {
@@ -21,7 +35,7 @@ public class LocationInWindowActivity extends Activity implements View.OnClickLi
 
 
     private View mLlRoot;
-    private View topView;
+    private MyView topView;
     private View newView;
 
     @Override
@@ -32,7 +46,7 @@ public class LocationInWindowActivity extends Activity implements View.OnClickLi
     }
 
     private void initView() {
-        topView = findViewById(R.id.location_in_window_v);
+        topView = (MyView) findViewById(R.id.location_in_window_v);
         newView = findViewById(R.id.location_in_window_v2);
         mLlRoot = findViewById(R.id.location_in_window_root_ll);
 
@@ -46,9 +60,10 @@ public class LocationInWindowActivity extends Activity implements View.OnClickLi
     }
 
     private void moveByResize(View v) {
-        ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-        layoutParams.height -= (int) getResources().getDimension(R.dimen.location_in_window_scroll_velocity);
-        v.setLayoutParams(layoutParams);
+//        ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+//        layoutParams.height -= (int) getResources().getDimension(R.dimen.location_in_window_scroll_velocity);
+//        v.setLayoutParams(layoutParams);
+        topView.resize();
     }
 
     private void customAScroll(int type) {

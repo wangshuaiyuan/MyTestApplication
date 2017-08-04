@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
 
-    <View
+    <wsy.org.mytestapplication.view.MyView
         android:id="@+id/location_in_window_v"
         android:layout_width="match_parent"
         android:layout_height="200dp"
