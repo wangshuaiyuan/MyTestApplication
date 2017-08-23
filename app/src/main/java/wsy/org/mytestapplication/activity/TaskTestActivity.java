@@ -9,6 +9,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
+import wsy.org.javacase.thread.HelloRxjava;
 import wsy.org.mytestapplication.R;
 import wsy.org.mytestapplication.taskHandler.ITask;
 import wsy.org.mytestapplication.taskHandler.TaskDispatcher;
@@ -44,7 +45,6 @@ public class TaskTestActivity extends Activity {
                     @Override
                     public void onSuccess(List result) {
                         Log.e("result.size", result.size() + "");
-
                     }
 
                     @Override
@@ -55,5 +55,8 @@ public class TaskTestActivity extends Activity {
                 taskGroup.startTasks();
             }
         });
+
+        HelloRxjava rxJavaTest = new HelloRxjava();
+        rxJavaTest.zipTest();
     }
 }
