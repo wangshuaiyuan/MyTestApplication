@@ -1,5 +1,6 @@
 package wsy.org.mytestapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import wsy.org.mytestapplication.activity.HtmlStringTestActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -71,4 +74,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        finish();
+        Intent intent = new Intent(this, HtmlStringTestActivity.class);
+        startActivity(intent);
+
+    }
 }

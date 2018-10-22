@@ -3,6 +3,7 @@ package wsy.org.mytestapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,6 +23,7 @@ import wsy.org.mytestapplication.activity.PermissionTestActivity;
 import wsy.org.mytestapplication.activity.Pull2RefreshListActivity;
 import wsy.org.mytestapplication.activity.ReversalAnimationActivity;
 import wsy.org.mytestapplication.activity.ScreenCaptureActivity;
+import wsy.org.mytestapplication.activity.ScrollViewHeightActivity;
 import wsy.org.mytestapplication.activity.SwipeRefreshLayoutTestActivity;
 import wsy.org.mytestapplication.activity.TaskTestActivity;
 import wsy.org.mytestapplication.activity.WidthHeightWeightLayoutActivity;
@@ -47,11 +49,17 @@ public class ListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DemoItemBean itemBean = (DemoItemBean) adapter.getItem(position);
                 Intent intent = new Intent(ListActivity.this, itemBean.demoActivityClass);
-                startActivity(intent);
+                startActivityForResult(intent, 1001);
             }
         });
+        Log.e("---", "oncreate");
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("---", "onActivityResult");
+    }
 
     private ArrayList<DemoItemBean> buildList() {
         ArrayList<DemoItemBean> list = new ArrayList<>();
@@ -147,6 +155,10 @@ public class ListActivity extends Activity {
         itemBean.demoName = "getLocationInWindow测试 ";
         list.add(itemBean);
 
+        itemBean = new DemoItemBean();
+        itemBean.demoActivityClass = ScrollViewHeightActivity.class;
+        itemBean.demoName = "scrollView高度测量bug";
+        list.add(itemBean);
         return list;
     }
 }

@@ -18,7 +18,10 @@
             android:name="JPUSH_APPKEY"
             android:value="wd7430306189bsqxmc" />
 
-        <activity android:name=".ListActivity">
+        <activity
+            android:name=".ListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,6 +30,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/NewAppTheme.NoActionBar" />
 
         <activity android:name=".activity.HtmlStringTestActivity" />
@@ -42,7 +46,9 @@
 
         <activity
             android:name=".activity.WidthHeightWeightLayoutActivity"
-            android:launchMode="standard" />
+            android:launchMode="standard">
+
+        </activity>
 
         <activity
             android:name=".activity.CircleImageViewActivity"
@@ -95,7 +101,25 @@
             android:launchMode="standard"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".activity.ScrollViewHeightActivity"
+            android:launchMode="standard"
+            android:theme="@style/NewAppTheme" >
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
 
+        <activity android:name=".activity.NotificationTestActivity">
+
+        </activity>
+        <activity
+            android:name=".activity.RecyclerViewInScrollViewActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".activity.WrapLayoutTestActivity" />
     </application>
 
 </manifest>
