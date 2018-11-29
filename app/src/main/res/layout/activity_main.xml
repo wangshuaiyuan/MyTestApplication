@@ -1,13 +1,43 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
 
+<!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:fillViewport="true">-->
+
+
+<!--<ListView--><!--android:id="@+id/lv_width_height"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent" />-->
+
+<!--</ScrollView>-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="vertical">
 
-
-    <ListView
-        android:id="@+id/lv_width_height"
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/id_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="500dp"
+        android:visibility="gone" />
 
-</ScrollView>
+    <com.example.navtablayout.NavTabLayout
+        android:id="@+id/nav_tab_test"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="gone" />
+
+    <wsy.org.mytestapplication.view.ScrollTestView
+        android:id="@+id/scroll_test_main_ac"
+        android:layout_width="match_parent"
+        android:paddingTop="500dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_scroll_test_main_ac"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#26a69a"
+            android:text="test"
+            android:textColor="#ffffff" />
+
+    </wsy.org.mytestapplication.view.ScrollTestView>
+</LinearLayout>

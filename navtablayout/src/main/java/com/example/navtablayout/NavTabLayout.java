@@ -1,36 +1,52 @@
 package com.example.navtablayout;
 
-import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 
+import com.example.navtablayout.Adapter.AbsTabAdapter;
+import com.example.navtablayout.Adapter.IAdapterDataObserver;
+
+import java.util.TreeMap;
+
 /**
  * Created by wsy on 22/10/2018
  * 通用导航栏
  */
-public class NavTabLayout extends HorizontalScrollView {
+public class NavTabLayout extends HorizontalScrollView implements IAdapterDataObserver {
+    /**
+     * 动画时间
+     */
+    private final int ANIMATION_DURATION = 300;
+    /**
+     * 不合法位置
+     */
+    public final int INVALID_POSITION = -1;
 
     private SlidingTabStrip mTabStrip;
 
-    private NavTabConfiguration mConfiguration;
+    /**
+     * 默认option
+     */
+    private Option mOption = new Option.Builder().build();
 
-    private ObjectAnimator mScrollAnimator;
+    private ValueAnimator mScrollAnimator;
+    private AbsTabAdapter mAdapter;
 
-    private NavTabAdapter mAdapter;
+    /**
+     * 选中位置，default 0
+     */
+    private int mSelectedPosition;
 
     /**
      * 指示器
      */
-    private NavTabIndicator mIndicator;
-
-
-    public void setNavTabIndicator(){
-
-    }
-
+    private AbsTabIndicatorRender mIndicator = new NavTabIndicator();
 
     public NavTabLayout(Context context) {
         this(context, null);
@@ -45,56 +61,36 @@ public class NavTabLayout extends HorizontalScrollView {
         init();
     }
 
+    /**
+     * 初始化
+     */
     private void init() {
-        mConfiguration = new NavTabConfiguration();
-        mAdapter = new NavTabAdapter();
-        mTabStrip = new SlidingTabStrip(getContext());
-        mScrollAnimator = new ObjectAnimator();
         mIndicator = new NavTabIndicator();
+        mTabStrip = new SlidingTabStrip(getContext());
+        mTabStrip.setOption(mOption);
+        super.addView(mTabStrip, 0, new HorizontalScrollView.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
     }
 
-
-    void setScrollPosition(int position, float positionOffset, boolean updateSelectedText,
-                           boolean updateIndicatorPosition) {
-        final int roundedPosition = Math.round(position + positionOffset);
-        if (roundedPosition < 0 || roundedPosition >= mTabStrip.getChildCount()) {
-            return;
+    /**
+     * 计算滚动目标位置
+     */
+    private int calculateTabScrollX(int position, float positionOffset) {
+        if (position >= mTabStrip.getChildCount()) {
+            return 0;
         }
-
-        if (updateIndicatorPosition) {
-            mTabStrip.setIndicatorPositionFromTabPosition(position, positionOffset);
-        }
-
-        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-            mScrollAnimator.cancel();
-        }
-        scrollTo(calculateScrollXForTab(position, positionOffset), 0);
-
-        if (updateSelectedText) {
-            setSelectedTabView(roundedPosition);
-        }
-    }
-
-
-    private void setSelectedTabView(int position) {
-        final int tabCount = mTabStrip.getChildCount();
-        if (position < tabCount) {
-            for (int i = 0; i < tabCount; i++) {
-                final View child = mTabStrip.getChildAt(i);
-                child.setSelected(i == position);
-            }
-        }
-    }
-
-    private int calculateScrollXForTab(int position, float positionOffset) {
-        if (mConfiguration.getmMode() == NavTabLayoutConstant.MODE_SCROLLABLE) {
+        if (mOption.getMode() == Option.MODE_SCROLLABLE) {
             final View selectedChild = mTabStrip.getChildAt(position);
+            if (selectedChild == null) {
+                return 0;
+            }
             final View nextChild = position + 1 < mTabStrip.getChildCount()
                     ? mTabStrip.getChildAt(position + 1)
                     : null;
-            final int selectedWidth = selectedChild != null ? selectedChild.getWidth() : 0;
+            final int selectedWidth = selectedChild.getWidth();
             final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
+            //选中的tab置于屏幕中间
             int scrollBase = selectedChild.getLeft() + (selectedWidth / 2) - (getWidth() / 2);
             int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * positionOffset);
 
@@ -106,26 +102,42 @@ public class NavTabLayout extends HorizontalScrollView {
     }
 
     /**
-     * 设置适配器
+     * 刷新tab内容view
      */
-    public void setAdapter(NavTabAdapter adapter) {
-        mAdapter = adapter;
-        mTabStrip.setAdapter(adapter);
-
-//        mIndicator.updateDisplayRange(0, 0, 0, 0);
-        mIndicator.setTotalCount(mAdapter.getItemCount());
+    private void updateTabs() {
+        mTabStrip.removeAllViews();
+        for (int i = 0, j = mAdapter.getItemCount(); i < j; i++) {
+            View itemView = mAdapter.getItemView(mTabStrip, i, mSelectedPosition == i);
+            mTabStrip.addView(itemView);
+        }
     }
 
+    /**
+     * 计算指示器终点位置
+     */
+    private int calculateSelectedTabCenterX(int position, float positionOffset) {
+        final View selectedChild = mTabStrip.getChildAt(position);
+        if (selectedChild == null) {
+            return 0;
+        }
+        final View nextChild = position + 1 < mTabStrip.getChildCount()
+                ? mTabStrip.getChildAt(position + 1)
+                : null;
+        final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
+        final int selectedWidth = selectedChild.getWidth();
+        int centerXBase = selectedChild.getLeft() + selectedWidth / 2;
+        int centerOffset = (int) ((selectedWidth + nextWidth) * 0.5f * positionOffset);
+        return (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR)
+                ? centerXBase + centerOffset
+                : centerXBase - centerOffset;
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //height
         final int idealHeight = NavTabUtil.dpToPx(getContext(), getDefaultHeight()) + getPaddingTop() + getPaddingBottom();
         switch (MeasureSpec.getMode(heightMeasureSpec)) {
             case MeasureSpec.AT_MOST:
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                        Math.min(idealHeight, MeasureSpec.getSize(heightMeasureSpec)),
-                        MeasureSpec.EXACTLY);
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.min(idealHeight, MeasureSpec.getSize(heightMeasureSpec)), MeasureSpec.EXACTLY);
                 break;
             case MeasureSpec.UNSPECIFIED:
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(idealHeight, MeasureSpec.EXACTLY);
@@ -138,11 +150,11 @@ public class NavTabLayout extends HorizontalScrollView {
             final View child = getChildAt(0);
             boolean remeasure = false;
 
-            switch (mConfiguration.getmMode()) {
-                case NavTabLayoutConstant.MODE_SCROLLABLE:
+            switch (mOption.getMode()) {
+                case Option.MODE_SCROLLABLE:
                     remeasure = child.getMeasuredWidth() < getMeasuredWidth();
                     break;
-                case NavTabLayoutConstant.MODE_FIXED:
+                case Option.MODE_FIXED:
                     remeasure = child.getMeasuredWidth() != getMeasuredWidth();
                     break;
             }
@@ -155,28 +167,121 @@ public class NavTabLayout extends HorizontalScrollView {
         }
     }
 
+    /**
+     * 动画检查赋值
+     */
+    private void ensureScrollAnimator() {
+        if (mScrollAnimator == null) {
+            mScrollAnimator = new ValueAnimator();
+            mScrollAnimator.setInterpolator(AnimationUtils.FAST_OUT_SLOW_IN_INTERPOLATOR);
+            mScrollAnimator.setDuration(ANIMATION_DURATION);
+            mScrollAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    scrollTo((int) animator.getAnimatedValue(), 0);
+                }
+            });
+        }
+    }
+
+    /**
+     * 动画滚动到某个位置
+     *
+     * @param newPosition 新位置
+     */
+    private void animatToPosition(int newPosition) {
+        if (newPosition == INVALID_POSITION) {
+            return;
+        }
+        if (getWindowToken() != null || mTabStrip.isChildNeedLayout()) {
+            scrollToPosition(newPosition, 0, true);
+        }
+
+        ensureScrollAnimator();
+        final int startScrollX = getScrollX();
+        final int targetScrollX = calculateTabScrollX(newPosition, 0);
+
+        if (startScrollX != targetScrollX) {
+            ensureScrollAnimator();
+            mScrollAnimator.setIntValues(startScrollX, targetScrollX);
+            mScrollAnimator.start();
+        }
+        mTabStrip.animateIndicatorToPosition(newPosition, ANIMATION_DURATION);
+    }
+
+    /**
+     * 获取默认高度
+     */
     private int getDefaultHeight() {
+
         if (mTabStrip == null || mTabStrip.getChildCount() == 0) {
             return 0;
         }
-        int maxHeight = 0, maxWidth = 0;
+
+        int maxHeight = 0;
         for (int i = 0; i < mTabStrip.getChildCount(); i++) {
             View childView = mTabStrip.getChildAt(i);
             maxHeight = childView.getMeasuredHeight();
-            maxWidth = childView.getMeasuredWidth();
         }
+
+        //展示指示器
+        if (mOption.isShowIndicator()) {
+            int height = mOption.getIndicatorRender().getHeight();
+            maxHeight += height;
+        }
+
         return maxHeight;
     }
 
     /**
-     * 指示器宽高
-     *
-     * @param width  宽
-     * @param height 高
+     * 设置适配器
      */
-    public void setIndicatorSize(int width, int height) {
-        mIndicator.setIndicatorHeight(height);
-        mIndicator.setIndicatorWidth(width);
+    public void setAdapter(@NonNull AbsTabAdapter adapter) {
+        mAdapter = adapter;
+        mAdapter.registerDataObserver(this);
+        updateTabs();
     }
 
+    /**
+     * 设置滚动位置
+     */
+    public void scrollToPosition(int position, float positionOffset, boolean updateIndicatorPosition) {
+        final int roundedPosition = Math.round(position + positionOffset);
+        if (roundedPosition < 0 || roundedPosition >= mTabStrip.getChildCount()) {
+            return;
+        }
+
+        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+            mScrollAnimator.cancel();
+        }
+        if (updateIndicatorPosition) {
+            mIndicator.setSelectedTabCenterX(calculateSelectedTabCenterX(position, positionOffset));
+        }
+        scrollTo(calculateTabScrollX(position, positionOffset), 0);
+        ViewCompat.postInvalidateOnAnimation(mTabStrip);
+    }
+
+    /**
+     * 设置配置类
+     *
+     * @param option 配置类对象
+     */
+    public void setOption(@NonNull Option option) {
+        mOption = option;
+        mTabStrip.setOption(option);
+    }
+
+    /**
+     * 设置指示器颜色
+     *
+     * @param color 色值
+     */
+    public void setIndicatorColor(@ColorInt int color) {
+        mOption.getIndicatorRender().setIndicatorColor(color);
+    }
+
+    @Override
+    public void onChanged() {
+        updateTabs();
+    }
 }
