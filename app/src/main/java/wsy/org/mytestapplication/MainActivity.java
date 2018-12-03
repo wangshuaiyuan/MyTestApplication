@@ -1,8 +1,10 @@
 package wsy.org.mytestapplication;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,9 +15,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.navtablayout.AbsTabIndicatorRender;
 import com.example.navtablayout.Adapter.AbsTabAdapter;
-import com.example.navtablayout.NavTabAdapter;
 import com.example.navtablayout.NavTabLayout;
+import com.example.navtablayout.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,28 +34,28 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer> mIdRes;
     //    private IndicatorView mIndicatorView;
     private ListView mLv;
+    private NavTabLayout mNavTabLayout;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String a = "aaaa";
-        Log.e("---", a.substring(0, 3));
 
         mIdRes = new ArrayList<>();
         mIdRes.add(R.mipmap.t_01);
         mIdRes.add(R.mipmap.t_02);
         mIdRes.add(R.mipmap.t_03);
         mIdRes.add(R.mipmap.t_04);
+        mIdRes.add(R.mipmap.t_01);
+        mIdRes.add(R.mipmap.t_02);
+        mIdRes.add(R.mipmap.t_03);
+        mIdRes.add(R.mipmap.t_04);
+        mIdRes.add(R.mipmap.t_01);
+        mIdRes.add(R.mipmap.t_02);
         mViewPager = findViewById(R.id.id_view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(this, mIdRes);
         mViewPager.setAdapter(mViewPagerAdapter);
-
-//        mIndicatorView = (IndicatorView) findViewById(R.id.id_indicator);
-//        mIndicatorView.setViewPager(mViewPager);
-//        mLv = (ListView) findViewById(R.id.lv_width_height);
-//        WidthHeightApdater adapter = new WidthHeightApdater();
-//        mLv.setAdapter(adapter);
 
         testNavTabLayout();
         testScroll();
@@ -72,13 +75,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void onClick(View view) {
+        mNavTabLayout.scrollBy(100, 0);
+        Log.e("---", mTabLayout.getScrollX() + "");
+    }
+
 
     private void testNavTabLayout() {
-        final NavTabLayout navTabLayout = findViewById(R.id.nav_tab_test);
+        mNavTabLayout = findViewById(R.id.nav_tab_test);
+        mTabLayout = findViewById(R.id.tablayout_test_main_ac);
+        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        mTabLayout.setTabGravity(mTabLayout.GRAVITY_FILL);
+
+        for (int i = 0; i < 10; i++) {
+            mTabLayout.addTab(mTabLayout.newTab());
+        }
+
+        for (int i = 0; i < 10; i++) {
+            mTabLayout.getTabAt(i).setText("太薄" + i);
+        }
+
+        Option option = new Option.Builder().isShowIndicator(true).gravity(Option.GRAVITY_FILL).mode(Option.MODE_SCROLLABLE).build();
+        mNavTabLayout.setOption(option);
+        mTabLayout.setupWithViewPager(mViewPager, false);
+
         AbsTabAdapter adapter = new AbsTabAdapter() {
             @Override
             public View getItemView(ViewGroup parent, int position, boolean isSelect) {
                 TextView textView = new TextView(MainActivity.this);
+                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(20, 0, 20, 0);
+                textView.setLayoutParams(params);
                 textView.setTextSize(14);
                 String color = isSelect ? "#ff4081" : "#2c3e50";
                 textView.setText(String.format("item%d", position));
@@ -107,12 +134,13 @@ public class MainActivity extends AppCompatActivity {
                 return 10;
             }
         };
-        navTabLayout.setAdapter(adapter);
+        mNavTabLayout.setAdapter(adapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                navTabLayout.setScrollPosition(position, positionOffset, true);
+                mNavTabLayout.scrollToPosition(position, positionOffset, true);
+//                navTabLayout.scrollTo((int) (position + positionOffset) * 100, 0);
             }
 
             @Override
@@ -162,5 +190,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HtmlStringTestActivity.class);
         startActivity(intent);
 
+    }
+
+    /**
+     * 指示器渲染器
+     */
+    public class Render extends AbsTabIndicatorRender {
+
+        @Override
+        protected void draw(Canvas canvas) {
+
+        }
     }
 }

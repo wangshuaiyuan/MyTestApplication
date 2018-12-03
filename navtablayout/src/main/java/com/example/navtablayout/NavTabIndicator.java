@@ -3,6 +3,8 @@ package com.example.navtablayout;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
 
 /**
  * Created by wsy on 01/11/2018
@@ -19,12 +21,18 @@ public class NavTabIndicator extends AbsTabIndicatorRender {
     /**
      * 渲染
      */
-    public void draw(Canvas canvas) {
-        mPaint.setColor(mIndicatorColor);
-        int tabWidth = mTabItemWidth;
-        if (tabWidth == 0) {
+    public void draw(@NonNull Canvas canvas, @NonNull Rect drawArea) {
+        int height = drawArea.bottom - drawArea.top;
+        int width = drawArea.right - drawArea.left;
+
+        if (height <= getTopPadding() + getBottomPadding() || width <= getLeftPadding() + getRightPadding()) {
             return;
         }
-        canvas.drawRect(mSelectedTabCenterX - mTabItemWidth / 2, mCanvasRect.top, mSelectedTabCenterX + mTabItemWidth / 2, mCanvasRect.bottom, mPaint);
+        Rect realDrawArea = new Rect();
+        realDrawArea.left = drawArea.left + getLeftPadding();
+        realDrawArea.right = drawArea.right - getRightPadding();
+        realDrawArea.top = drawArea.top + getTopPadding();
+        realDrawArea.bottom = drawArea.bottom - getBottomPadding();
+        canvas.drawRect(realDrawArea, mPaint);
     }
 }

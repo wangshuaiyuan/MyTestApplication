@@ -196,7 +196,7 @@ public class Option {
                 mIndicatorRender = new NavTabIndicator();
             }
             option.mIndicatorRender = mIndicatorRender;
-            return new Option();
+            return option;
         }
     }
 }

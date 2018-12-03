@@ -1,15 +1,15 @@
 package com.example.navtablayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.widget.LinearLayout;
-
-import com.example.navtablayout.Adapter.IAdapterDataObserver;
-import com.example.navtablayout.Adapter.AbsTabAdapter;
 
 /**
  * Created by wsy on 22/10/2018
@@ -20,6 +20,16 @@ public class SlidingTabStrip extends LinearLayout {
      * 滚动动画
      */
     private ValueAnimator mIndicatorAnimator;
+
+    /**
+     * 指示器在画布中x轴的位置
+     */
+    private int mIndicatorLeft = -1, mIndicatorRight = -1;
+
+
+    private int mSelectedPosition;
+
+    private float mSelectionOffset;
 
     /**
      * 配置类
@@ -33,6 +43,51 @@ public class SlidingTabStrip extends LinearLayout {
     }
 
     /**
+     * 刷新指示器边界
+     *
+     * @param left  左侧
+     * @param right 右侧
+     */
+    private void refreshIndicatorBorder(int left, int right) {
+        if (mIndicatorLeft != left || mIndicatorRight != right) {
+            mIndicatorLeft = left;
+            mIndicatorRight = right;
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
+
+    void setSelectedPosition(int position, float offset) {
+        mSelectedPosition = position;
+        mSelectionOffset = offset;
+        updateSelectPosition();
+    }
+
+    /**
+     * 刷新选择状态
+     */
+    private void updateSelectPosition() {
+        final View selectedTitle = getChildAt(mSelectedPosition);
+        int left, right;
+
+        if (selectedTitle != null && selectedTitle.getWidth() > 0) {
+            left = selectedTitle.getLeft();
+            right = selectedTitle.getRight();
+
+            if (mSelectionOffset > 0f && mSelectedPosition < getChildCount() - 1) {
+                View nextTitle = getChildAt(mSelectedPosition + 1);
+                left = (int) (mSelectionOffset * nextTitle.getLeft() +
+                        (1.0f - mSelectionOffset) * left);
+                right = (int) (mSelectionOffset * nextTitle.getRight() +
+                        (1.0f - mSelectionOffset) * right);
+            }
+        } else {
+            left = right = -1;
+        }
+        refreshIndicatorBorder(left, right);
+
+    }
+
+    /**
      * 设置配置项
      */
     public void setOption(@NonNull Option option) {
@@ -42,12 +97,31 @@ public class SlidingTabStrip extends LinearLayout {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mOption.isShowIndicator()) {
+        if (mOption.isShowIndicator() && mOption.getIndicatorRender().getHeight() > 0 && mIndicatorLeft > 0 && mIndicatorRight > 0) {
             if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
                 scrollTo(0, -mOption.getIndicatorRender().getHeight());
             }
-            mOption.getIndicatorRender().draw(canvas);
+            mOption.getIndicatorRender().draw(canvas, buildIndicatorDrawArea());
         }
+    }
+
+    /**
+     * 构造指示器展示区域
+     *
+     * @return 展示区域
+     */
+    private Rect buildIndicatorDrawArea() {
+        Rect rect = new Rect();
+        rect.left = mIndicatorLeft;
+        rect.right = mIndicatorRight;
+        if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
+            rect.top = 0;
+            rect.bottom = mOption.getIndicatorRender().getHeight();
+        } else {
+            rect.bottom = getBottom();
+            rect.top = rect.bottom - mOption.getIndicatorRender().getHeight();
+        }
+        return rect;
     }
 
     @Override
@@ -62,7 +136,7 @@ public class SlidingTabStrip extends LinearLayout {
             final int count = getChildCount();
 
             int largestTabWidth = 0;
-            for (int i = 0, z = count; i < z; i++) {
+            for (int i = 0; i < count; i++) {
                 View child = getChildAt(i);
                 if (child.getVisibility() == VISIBLE) {
                     largestTabWidth = Math.max(largestTabWidth, child.getMeasuredWidth());
@@ -92,7 +166,6 @@ public class SlidingTabStrip extends LinearLayout {
             if (remeasure) {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
-
         }
     }
 
@@ -117,8 +190,54 @@ public class SlidingTabStrip extends LinearLayout {
      * @param position 目标索引
      * @param duration 时间
      */
-    void animateIndicatorToPosition(int position, int duration) {
-        //TODO
+    void animateIndicatorToPosition(final int position, int duration) {
+        if (mIndicatorAnimator != null && mIndicatorAnimator.isRunning()) {
+            mIndicatorAnimator.cancel();
+        }
 
+        final View targetView = getChildAt(position);
+        if (targetView == null) {
+            updateSelectPosition();
+            return;
+        }
+
+        final int targetLeft = targetView.getLeft();
+        final int targetRight = targetView.getRight();
+        final int startLeft;
+        final int startRight;
+
+        if (Math.abs(position - mSelectedPosition) <= 1) {
+            startLeft = mIndicatorLeft;
+            startRight = mIndicatorRight;
+        } else {
+            if (position < mSelectedPosition) {
+                startLeft = startRight = targetRight;
+            } else {
+                startLeft = startRight = targetLeft;
+            }
+        }
+
+        if (startLeft != targetLeft || startRight != targetRight) {
+            ValueAnimator animator = mIndicatorAnimator = new ValueAnimator();
+            animator.setInterpolator(AnimationUtils.FAST_OUT_SLOW_IN_INTERPOLATOR);
+            animator.setDuration(duration);
+            animator.setFloatValues(0, 1);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    final float fraction = animator.getAnimatedFraction();
+                    refreshIndicatorBorder(AnimationUtils.lerp(startLeft, targetLeft, fraction),
+                            AnimationUtils.lerp(startRight, targetRight, fraction));
+                }
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    mSelectedPosition = position;
+                    mSelectionOffset = 0f;
+                }
+            });
+            animator.start();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.navtablayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.ColorInt;
@@ -11,8 +13,6 @@ import android.widget.HorizontalScrollView;
 
 import com.example.navtablayout.Adapter.AbsTabAdapter;
 import com.example.navtablayout.Adapter.IAdapterDataObserver;
-
-import java.util.TreeMap;
 
 /**
  * Created by wsy on 22/10/2018
@@ -43,10 +43,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      */
     private int mSelectedPosition;
 
-    /**
-     * 指示器
-     */
-    private AbsTabIndicatorRender mIndicator = new NavTabIndicator();
+    private float mPositionOffset;
 
     public NavTabLayout(Context context) {
         this(context, null);
@@ -65,7 +62,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 初始化
      */
     private void init() {
-        mIndicator = new NavTabIndicator();
         mTabStrip = new SlidingTabStrip(getContext());
         mTabStrip.setOption(mOption);
         super.addView(mTabStrip, 0, new HorizontalScrollView.LayoutParams(
@@ -101,6 +97,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
         return 0;
     }
 
+
     /**
      * 刷新tab内容view
      */
@@ -110,26 +107,41 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             View itemView = mAdapter.getItemView(mTabStrip, i, mSelectedPosition == i);
             mTabStrip.addView(itemView);
         }
+        adjustSelectedPosition();
+
     }
 
     /**
-     * 计算指示器终点位置
+     * 调整选中位置
      */
-    private int calculateSelectedTabCenterX(int position, float positionOffset) {
-        final View selectedChild = mTabStrip.getChildAt(position);
-        if (selectedChild == null) {
-            return 0;
+    private void adjustSelectedPosition(){
+        if (mSelectedPosition > mAdapter.getItemCount()) {
+            mSelectedPosition = mAdapter.getItemCount() - 1;
         }
-        final View nextChild = position + 1 < mTabStrip.getChildCount()
-                ? mTabStrip.getChildAt(position + 1)
-                : null;
-        final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
-        final int selectedWidth = selectedChild.getWidth();
-        int centerXBase = selectedChild.getLeft() + selectedWidth / 2;
-        int centerOffset = (int) ((selectedWidth + nextWidth) * 0.5f * positionOffset);
-        return (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR)
-                ? centerXBase + centerOffset
-                : centerXBase - centerOffset;
+    }
+
+    /**
+     * 刷新选中view
+     *
+     * @param position 位置
+     * @param itemView view
+     */
+    private void refreshSelectItem(int position, View itemView) {
+        if (mAdapter != null) {
+            mAdapter.updateSelectPosition(itemView, position);
+        }
+    }
+
+    /**
+     * 刷新取消选中view
+     *
+     * @param position 位置
+     * @param itemView view
+     */
+    private void refreshUnSelectItem(int position, View itemView) {
+        if (mAdapter != null) {
+            mAdapter.updateUnSelectPosition(itemView, position);
+        }
     }
 
     @Override
@@ -189,7 +201,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      *
      * @param newPosition 新位置
      */
-    private void animatToPosition(int newPosition) {
+    public void animatToPosition(final int newPosition) {
         if (newPosition == INVALID_POSITION) {
             return;
         }
@@ -205,8 +217,22 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             ensureScrollAnimator();
             mScrollAnimator.setIntValues(startScrollX, targetScrollX);
             mScrollAnimator.start();
+            mScrollAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    onItemSelected(newPosition, mSelectedPosition);
+                    mPositionOffset = 0f;
+                    mSelectedPosition = newPosition;
+                }
+            });
         }
+
         mTabStrip.animateIndicatorToPosition(newPosition, ANIMATION_DURATION);
+    }
+
+    private void onItemSelected(int newSelectPosition, int unSelectPosition) {
+        refreshSelectItem(newSelectPosition, mTabStrip.getChildAt(newSelectPosition));
+        refreshUnSelectItem(unSelectPosition, mTabStrip.getChildAt(unSelectPosition));
     }
 
     /**
@@ -237,6 +263,9 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 设置适配器
      */
     public void setAdapter(@NonNull AbsTabAdapter adapter) {
+        mSelectedPosition = 0;
+        mPositionOffset = 0;
+
         mAdapter = adapter;
         mAdapter.registerDataObserver(this);
         updateTabs();
@@ -251,14 +280,24 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             return;
         }
 
+
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
             mScrollAnimator.cancel();
         }
         if (updateIndicatorPosition) {
-            mIndicator.setSelectedTabCenterX(calculateSelectedTabCenterX(position, positionOffset));
+            mTabStrip.setSelectedPosition(position, positionOffset);
         }
-        scrollTo(calculateTabScrollX(position, positionOffset), 0);
+        int destinationX = calculateTabScrollX(position, positionOffset);
+        scrollTo(destinationX, 0);
         ViewCompat.postInvalidateOnAnimation(mTabStrip);
+        //TODO 选中位置回调
+
+
+        if (mPositionOffset > 0 && positionOffset == 0) {
+            onItemSelected(position, mSelectedPosition);
+        }
+        mSelectedPosition = position;
+        mPositionOffset = positionOffset;
     }
 
     /**
@@ -269,6 +308,9 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
     public void setOption(@NonNull Option option) {
         mOption = option;
         mTabStrip.setOption(option);
+        if (getWindowToken() != null) {
+            requestLayout();
+        }
     }
 
     /**

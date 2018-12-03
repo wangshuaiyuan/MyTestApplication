@@ -3,38 +3,34 @@ package com.example.navtablayout;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 
 /**
  * Created by wsy on 02/11/2018
  */
 public abstract class AbsTabIndicatorRender {
 
-    /**
-     * 已选中position
-     */
-    protected float mSelectedTabCenterX = 200;
 
     /**
-     * 标签条目宽度,起参照作用
+     * 高度
      */
-    protected int mTabItemWidth = 100;
-
     private int mHeight = 100;
-
-    private int mWidth = 100;
-
+    /**
+     *
+     */
+    private int mTopPadding, mBottomPadding, mLeftPadding, mRightPadding;
     /**
      * 指示器颜色
      */
     @ColorInt
     protected int mIndicatorColor;
 
-
     /**
      * 设置
+     *
      * @param color
      */
-    public void setIndicatorColor(@ColorInt int color){
+    public void setIndicatorColor(@ColorInt int color) {
         mIndicatorColor = color;
     }
 
@@ -49,59 +45,48 @@ public abstract class AbsTabIndicatorRender {
         this.mHeight = height;
     }
 
-    public int getWidth() {
-        return mWidth;
-    }
-
-
-    public void setWidth(int width) {
-        mWidth = width;
-    }
 
     /**
-     * 可渲染范围
+     * 渲染,leftLimit,rightLimit,height,
      */
-    protected Rect mCanvasRect = new Rect();
-
-
-    /**
-     * 渲染
-     */
-    abstract void draw(Canvas canvas);
+    protected abstract void draw(@NonNull Canvas canvas, @NonNull Rect drawArea);
 
     /**
-     * 更新渲染区域
+     * 停止动画
      */
-    void updateDisplayArea(int l, int t, int r, int b) {
-        mCanvasRect.set(l, t, r, b);
+    protected void stopAnimtor() {
+
     }
 
-    /**
-     * 更新选中索引
-     */
-    void updateSelCenterX(float centerX) {
-        mSelectedTabCenterX = centerX;
+    public int getTopPadding() {
+        return mTopPadding;
     }
 
-    /**
-     * 标签条目宽度
-     */
-    void setTabItemWidth(int tabItemWidth) {
-        mTabItemWidth = tabItemWidth;
+    public void setTopPadding(int mTopPadding) {
+        this.mTopPadding = mTopPadding;
     }
 
-    void setSelectedTabCenterX(float selectedTabCenterX) {
-        mSelectedTabCenterX = selectedTabCenterX;
+    public int getBottomPadding() {
+        return mBottomPadding;
     }
 
-    /**
-     * 滚动至某个位置
-     * TODO
-     *
-     * @param position 目标位置
-     * @param duration 时间
-     */
-    void animtorToPosition(int position, int duration) {
+    public void setBottomPadding(int mBottomPadding) {
+        this.mBottomPadding = mBottomPadding;
+    }
 
+    public int getLeftPadding() {
+        return mLeftPadding;
+    }
+
+    public void setLeftPadding(int mLeftPadding) {
+        this.mLeftPadding = mLeftPadding;
+    }
+
+    public int getRightPadding() {
+        return mRightPadding;
+    }
+
+    public void setRightPadding(int mRightPadding) {
+        this.mRightPadding = mRightPadding;
     }
 }
