@@ -24,7 +24,7 @@
         android:layout_height="500dp"
         android:visibility="visible" />
 
-    <com.example.navtablayout.NavTabLayout
+    <com.example.navtablayout.core.NavTabLayout
         android:id="@+id/nav_tab_test"
         android:layout_width="match_parent"
         android:layout_height="100dp"

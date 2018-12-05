@@ -1,4 +1,4 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -8,8 +8,12 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.example.navtablayout.core.AnimationUtils;
+import com.example.navtablayout.core.Option;
 
 /**
  * Created by wsy on 22/10/2018
@@ -62,6 +66,12 @@ public class SlidingTabStrip extends LinearLayout {
         updateSelectPosition();
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        updateSelectPosition();
+    }
+
     /**
      * 刷新选择状态
      */
@@ -83,6 +93,7 @@ public class SlidingTabStrip extends LinearLayout {
         } else {
             left = right = -1;
         }
+//        Log.e("---","left"+left+"right"+right);
         refreshIndicatorBorder(left, right);
 
     }
@@ -97,16 +108,23 @@ public class SlidingTabStrip extends LinearLayout {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mOption.isShowIndicator() && mOption.getIndicatorRender().getHeight() > 0 && mIndicatorLeft > 0 && mIndicatorRight > 0) {
+        if (mOption.isShowIndicator() && mOption.getIndicatorRender().getHeight() > 0 && mIndicatorLeft >= 0 && mIndicatorRight >= 0) {
             if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
                 scrollTo(0, -mOption.getIndicatorRender().getHeight());
+                canvas.save();
+                canvas.translate(0,-mOption.getIndicatorRender().getHeight());
             }
             mOption.getIndicatorRender().draw(canvas, buildIndicatorDrawArea());
+            if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
+               canvas.restore();
+            }
         }
     }
 
     /**
      * 构造指示器展示区域
+     * TODO padding
+     * TODO 数组越界问题考虑
      *
      * @return 展示区域
      */

@@ -1,6 +1,5 @@
-package com.example.navtablayout.Adapter;
+package com.example.navtablayout.core.Adapter;
 
-import android.database.Observable;
 import android.view.View;
 import android.view.ViewGroup;
 

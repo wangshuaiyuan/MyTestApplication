@@ -1,7 +1,6 @@
 package wsy.org.mytestapplication;
 
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,10 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.navtablayout.AbsTabIndicatorRender;
-import com.example.navtablayout.Adapter.AbsTabAdapter;
-import com.example.navtablayout.NavTabLayout;
-import com.example.navtablayout.Option;
+import com.example.navtablayout.core.Adapter.AbsTabAdapter;
+import com.example.navtablayout.core.NavTabLayout;
+import com.example.navtablayout.core.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             mTabLayout.getTabAt(i).setText("太薄" + i);
         }
 
-        Option option = new Option.Builder().isShowIndicator(true).gravity(Option.GRAVITY_FILL).mode(Option.MODE_SCROLLABLE).build();
+        Option option = new Option.Builder().isShowIndicator(true).indicatorAlign(Option.INDICATOR_ALIGN_TOP).gravity(Option.GRAVITY_FILL).mode(Option.MODE_SCROLLABLE).build();
         mNavTabLayout.setOption(option);
         mTabLayout.setupWithViewPager(mViewPager, false);
 
@@ -103,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View getItemView(ViewGroup parent, int position, boolean isSelect) {
                 TextView textView = new TextView(MainActivity.this);
-                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(20, 0, 20, 0);
+                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(150, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                params.setMargins(20, 0, 20, 0);
                 textView.setLayoutParams(params);
                 textView.setTextSize(14);
                 String color = isSelect ? "#ff4081" : "#2c3e50";
@@ -117,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             public void updateSelectPosition(View itemView, int newSelectPosition) {
                 if (itemView instanceof TextView) {
                     TextView tv = (TextView) itemView;
+                    Log.e("---SelectPosition--",tv.getText()+"");
                     tv.setTextColor(Color.parseColor("#ff4081"));
                 }
             }
@@ -125,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
             public void updateUnSelectPosition(View itemView, int unSelectPosition) {
                 if (itemView instanceof TextView) {
                     TextView tv = (TextView) itemView;
+                    Log.e("---unSelectPosition--",tv.getText()+"");
                     tv.setTextColor(Color.parseColor("#2c3e50"));
                 }
             }
@@ -139,13 +139,12 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                mNavTabLayout.scrollToPosition(position, positionOffset, true);
-//                navTabLayout.scrollTo((int) (position + positionOffset) * 100, 0);
+                mNavTabLayout.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                mNavTabLayout.onPageSelected(position);
             }
 
             @Override
@@ -190,16 +189,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HtmlStringTestActivity.class);
         startActivity(intent);
 
-    }
-
-    /**
-     * 指示器渲染器
-     */
-    public class Render extends AbsTabIndicatorRender {
-
-        @Override
-        protected void draw(Canvas canvas) {
-
-        }
     }
 }

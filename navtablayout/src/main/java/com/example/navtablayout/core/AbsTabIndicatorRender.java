@@ -1,4 +1,4 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 /**
  * Created by wsy on 02/11/2018
+ * 指示器渲染器
  */
 public abstract class AbsTabIndicatorRender {
 
@@ -49,7 +50,7 @@ public abstract class AbsTabIndicatorRender {
     /**
      * 渲染,leftLimit,rightLimit,height,
      */
-    protected abstract void draw(@NonNull Canvas canvas, @NonNull Rect drawArea);
+    public abstract void draw(@NonNull Canvas canvas, @NonNull Rect drawArea);
 
     /**
      * 停止动画

@@ -1,8 +1,10 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
 import android.support.annotation.RestrictTo;
+
+import com.example.navtablayout.NavTabIndicator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

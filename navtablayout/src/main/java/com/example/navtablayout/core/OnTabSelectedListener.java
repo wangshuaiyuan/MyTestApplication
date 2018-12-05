@@ -1,4 +1,4 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 /**
  * tab选中或非选中事件

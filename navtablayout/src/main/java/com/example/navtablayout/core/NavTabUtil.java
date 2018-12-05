@@ -1,11 +1,11 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 import android.content.Context;
 
 /**
  * Created by wsy on 01/11/2018
  */
-class NavTabUtil {
+public class NavTabUtil {
 
     /**
      * dp转px

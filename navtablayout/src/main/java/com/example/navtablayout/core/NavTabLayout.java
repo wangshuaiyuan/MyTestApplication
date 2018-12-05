@@ -1,24 +1,25 @@
-package com.example.navtablayout;
+package com.example.navtablayout.core;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 
-import com.example.navtablayout.Adapter.AbsTabAdapter;
-import com.example.navtablayout.Adapter.IAdapterDataObserver;
+import com.example.navtablayout.core.Adapter.AbsTabAdapter;
+import com.example.navtablayout.core.Adapter.IAdapterDataObserver;
+import com.example.navtablayout.core.observer.ScrollChangeObserver;
 
 /**
  * Created by wsy on 22/10/2018
  * 通用导航栏
  */
-public class NavTabLayout extends HorizontalScrollView implements IAdapterDataObserver {
+public class NavTabLayout extends HorizontalScrollView implements IAdapterDataObserver, ScrollChangeObserver {
     /**
      * 动画时间
      */
@@ -42,8 +43,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 选中位置，default 0
      */
     private int mSelectedPosition;
-
-    private float mPositionOffset;
 
     public NavTabLayout(Context context) {
         this(context, null);
@@ -72,7 +71,8 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 计算滚动目标位置
      */
     private int calculateTabScrollX(int position, float positionOffset) {
-        if (position >= mTabStrip.getChildCount()) {
+//        Log.e("---positionOffset", positionOffset + "");
+        if (mOption.getMode() != Option.MODE_SCROLLABLE || position >= mTabStrip.getChildCount()) {
             return 0;
         }
         if (mOption.getMode() == Option.MODE_SCROLLABLE) {
@@ -86,9 +86,15 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             final int selectedWidth = selectedChild.getWidth();
             final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
-            //选中的tab置于屏幕中间
+//            //选中的tab置于屏幕中间
+//            Log.e("getLeft()---",selectedChild.getLeft()+"");
+//            Log.e("selectedWidth()---",selectedWidth+"");
+//            Log.e("getWidth()---",getWidth()+"");
             int scrollBase = selectedChild.getLeft() + (selectedWidth / 2) - (getWidth() / 2);
             int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * positionOffset);
+
+//            Log.e("---scrollBase", scrollBase + "");
+//            Log.e("---scrollOffset", scrollOffset + "");
 
             return (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR)
                     ? scrollBase + scrollOffset
@@ -96,7 +102,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
         }
         return 0;
     }
-
 
     /**
      * 刷新tab内容view
@@ -114,7 +119,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
     /**
      * 调整选中位置
      */
-    private void adjustSelectedPosition(){
+    private void adjustSelectedPosition() {
         if (mSelectedPosition > mAdapter.getItemCount()) {
             mSelectedPosition = mAdapter.getItemCount() - 1;
         }
@@ -221,7 +226,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     onItemSelected(newPosition, mSelectedPosition);
-                    mPositionOffset = 0f;
                     mSelectedPosition = newPosition;
                 }
             });
@@ -233,6 +237,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
     private void onItemSelected(int newSelectPosition, int unSelectPosition) {
         refreshSelectItem(newSelectPosition, mTabStrip.getChildAt(newSelectPosition));
         refreshUnSelectItem(unSelectPosition, mTabStrip.getChildAt(unSelectPosition));
+        mSelectedPosition = newSelectPosition;
     }
 
     /**
@@ -263,18 +268,16 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 设置适配器
      */
     public void setAdapter(@NonNull AbsTabAdapter adapter) {
-        mSelectedPosition = 0;
-        mPositionOffset = 0;
-
         mAdapter = adapter;
         mAdapter.registerDataObserver(this);
         updateTabs();
+        scrollToPosition(mSelectedPosition, 0, true);
     }
 
     /**
      * 设置滚动位置
      */
-    public void scrollToPosition(int position, float positionOffset, boolean updateIndicatorPosition) {
+    protected void scrollToPosition(int position, float positionOffset, boolean updateIndicatorPosition) {
         final int roundedPosition = Math.round(position + positionOffset);
         if (roundedPosition < 0 || roundedPosition >= mTabStrip.getChildCount()) {
             return;
@@ -290,14 +293,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
         int destinationX = calculateTabScrollX(position, positionOffset);
         scrollTo(destinationX, 0);
         ViewCompat.postInvalidateOnAnimation(mTabStrip);
-        //TODO 选中位置回调
-
-
-        if (mPositionOffset > 0 && positionOffset == 0) {
-            onItemSelected(position, mSelectedPosition);
-        }
-        mSelectedPosition = position;
-        mPositionOffset = positionOffset;
     }
 
     /**
@@ -313,17 +308,25 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
         }
     }
 
-    /**
-     * 设置指示器颜色
-     *
-     * @param color 色值
-     */
-    public void setIndicatorColor(@ColorInt int color) {
-        mOption.getIndicatorRender().setIndicatorColor(color);
-    }
-
     @Override
     public void onChanged() {
         updateTabs();
+    }
+
+    /**
+     * 滚动位置
+     */
+    public float getScrollPosition() {
+        return mSelectedPosition;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        scrollToPosition(position, positionOffset, true);
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        onItemSelected(position, mSelectedPosition);
     }
 }

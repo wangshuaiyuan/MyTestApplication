@@ -1,4 +1,4 @@
-package com.example.navtablayout.Adapter;
+package com.example.navtablayout.core.Adapter;
 
 /**
  * Created by wsy on 28/11/2018

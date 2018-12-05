@@ -1,4 +1,4 @@
-package com.example.navtablayout.Adapter;
+package com.example.navtablayout.core.Adapter;
 
 import android.database.Observable;
 
