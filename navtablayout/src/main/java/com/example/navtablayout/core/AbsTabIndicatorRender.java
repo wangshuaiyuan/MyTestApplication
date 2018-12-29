@@ -15,7 +15,7 @@ public abstract class AbsTabIndicatorRender {
     /**
      * 高度
      */
-    private int mHeight = 100;
+    private int mHeight = 10;
     /**
      *
      */

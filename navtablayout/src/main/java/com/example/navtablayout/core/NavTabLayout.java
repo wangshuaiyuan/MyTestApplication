@@ -64,14 +64,13 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
         mTabStrip = new SlidingTabStrip(getContext());
         mTabStrip.setOption(mOption);
         super.addView(mTabStrip, 0, new HorizontalScrollView.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
     /**
      * 计算滚动目标位置
      */
     private int calculateTabScrollX(int position, float positionOffset) {
-//        Log.e("---positionOffset", positionOffset + "");
         if (mOption.getMode() != Option.MODE_SCROLLABLE || position >= mTabStrip.getChildCount()) {
             return 0;
         }
@@ -86,15 +85,8 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             final int selectedWidth = selectedChild.getWidth();
             final int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
 
-//            //选中的tab置于屏幕中间
-//            Log.e("getLeft()---",selectedChild.getLeft()+"");
-//            Log.e("selectedWidth()---",selectedWidth+"");
-//            Log.e("getWidth()---",getWidth()+"");
             int scrollBase = selectedChild.getLeft() + (selectedWidth / 2) - (getWidth() / 2);
             int scrollOffset = (int) ((selectedWidth + nextWidth) * 0.5f * positionOffset);
-
-//            Log.e("---scrollBase", scrollBase + "");
-//            Log.e("---scrollOffset", scrollOffset + "");
 
             return (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR)
                     ? scrollBase + scrollOffset
@@ -113,7 +105,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             mTabStrip.addView(itemView);
         }
         adjustSelectedPosition();
-
     }
 
     /**
@@ -151,7 +142,7 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int idealHeight = NavTabUtil.dpToPx(getContext(), getDefaultHeight()) + getPaddingTop() + getPaddingBottom();
+        final int idealHeight = getDefaultHeight() + getPaddingTop() + getPaddingBottom();
         switch (MeasureSpec.getMode(heightMeasureSpec)) {
             case MeasureSpec.AT_MOST:
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.min(idealHeight, MeasureSpec.getSize(heightMeasureSpec)), MeasureSpec.EXACTLY);
@@ -244,15 +235,18 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      * 获取默认高度
      */
     private int getDefaultHeight() {
-
         if (mTabStrip == null || mTabStrip.getChildCount() == 0) {
             return 0;
         }
 
+
+        mTabStrip.requestLayout();
         int maxHeight = 0;
         for (int i = 0; i < mTabStrip.getChildCount(); i++) {
             View childView = mTabStrip.getChildAt(i);
-            maxHeight = childView.getMeasuredHeight();
+            int childeHeigt = childView.getMeasuredHeight();
+            Log.e("-----", childeHeigt + "");
+            maxHeight = Math.max(maxHeight, childeHeigt);
         }
 
         //展示指示器
@@ -260,7 +254,6 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
             int height = mOption.getIndicatorRender().getHeight();
             maxHeight += height;
         }
-
         return maxHeight;
     }
 
@@ -318,6 +311,15 @@ public class NavTabLayout extends HorizontalScrollView implements IAdapterDataOb
      */
     public float getScrollPosition() {
         return mSelectedPosition;
+    }
+
+    /**
+     * 设置选中位置
+     *
+     * @param position
+     */
+    public void setSelectPosition(int position) {
+        scrollToPosition(position, 0, true);
     }
 
     @Override

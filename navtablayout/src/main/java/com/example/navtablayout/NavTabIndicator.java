@@ -37,11 +37,6 @@ public class NavTabIndicator extends AbsTabIndicatorRender {
         realDrawArea.right = drawArea.right - getRightPadding();
         realDrawArea.top = drawArea.top + getTopPadding();
         realDrawArea.bottom = drawArea.bottom - getBottomPadding();
-
-        Log.e("---l",realDrawArea.left+"");
-        Log.e("---r",realDrawArea.right+"");
-        Log.e("---t",realDrawArea.top+"");
-        Log.e("---b",realDrawArea.bottom+"");
         canvas.drawRect(realDrawArea, mPaint);
     }
 }

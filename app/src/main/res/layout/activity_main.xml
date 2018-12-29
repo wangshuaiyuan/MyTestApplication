@@ -27,7 +27,7 @@
     <com.example.navtablayout.core.NavTabLayout
         android:id="@+id/nav_tab_test"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:visibility="visible" />
 
     <android.support.design.widget.TabLayout

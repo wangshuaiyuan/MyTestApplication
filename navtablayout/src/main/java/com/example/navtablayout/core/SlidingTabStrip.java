@@ -93,9 +93,7 @@ public class SlidingTabStrip extends LinearLayout {
         } else {
             left = right = -1;
         }
-//        Log.e("---","left"+left+"right"+right);
         refreshIndicatorBorder(left, right);
-
     }
 
     /**
@@ -112,19 +110,17 @@ public class SlidingTabStrip extends LinearLayout {
             if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
                 scrollTo(0, -mOption.getIndicatorRender().getHeight());
                 canvas.save();
-                canvas.translate(0,-mOption.getIndicatorRender().getHeight());
+                canvas.translate(0, -mOption.getIndicatorRender().getHeight());
             }
             mOption.getIndicatorRender().draw(canvas, buildIndicatorDrawArea());
             if (mOption.getIndicatorAlign() == Option.INDICATOR_ALIGN_TOP) {
-               canvas.restore();
+                canvas.restore();
             }
         }
     }
 
     /**
      * 构造指示器展示区域
-     * TODO padding
-     * TODO 数组越界问题考虑
      *
      * @return 展示区域
      */
@@ -136,6 +132,7 @@ public class SlidingTabStrip extends LinearLayout {
             rect.top = 0;
             rect.bottom = mOption.getIndicatorRender().getHeight();
         } else {
+
             rect.bottom = getBottom();
             rect.top = rect.bottom - mOption.getIndicatorRender().getHeight();
         }
@@ -170,9 +167,9 @@ public class SlidingTabStrip extends LinearLayout {
                 for (int i = 0; i < count; i++) {
                     final LinearLayout.LayoutParams lp =
                             (LayoutParams) getChildAt(i).getLayoutParams();
-                    if (lp.width != largestTabWidth || lp.weight != 0) {
+                    if (lp.width != largestTabWidth || lp.weight != 1) {
                         lp.width = largestTabWidth;
-                        lp.weight = 0;
+                        lp.weight = 1;
                         remeasure = true;
                     }
                 }

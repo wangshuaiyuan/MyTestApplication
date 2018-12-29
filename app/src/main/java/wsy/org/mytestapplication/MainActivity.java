@@ -45,17 +45,19 @@ public class MainActivity extends AppCompatActivity {
         mIdRes.add(R.mipmap.t_02);
         mIdRes.add(R.mipmap.t_03);
         mIdRes.add(R.mipmap.t_04);
-        mIdRes.add(R.mipmap.t_01);
-        mIdRes.add(R.mipmap.t_02);
-        mIdRes.add(R.mipmap.t_03);
-        mIdRes.add(R.mipmap.t_04);
-        mIdRes.add(R.mipmap.t_01);
-        mIdRes.add(R.mipmap.t_02);
+//        mIdRes.add(R.mipmap.t_01);
+//        mIdRes.add(R.mipmap.t_02);
+//        mIdRes.add(R.mipmap.t_03);
+//        mIdRes.add(R.mipmap.t_04);
+//        mIdRes.add(R.mipmap.t_01);
+//        mIdRes.add(R.mipmap.t_02);
         mViewPager = findViewById(R.id.id_view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(this, mIdRes);
         mViewPager.setAdapter(mViewPagerAdapter);
 
-        testNavTabLayout();
+//        testNavTabLayout();
+        testNavigation();
+
         testScroll();
 
     }
@@ -78,6 +80,79 @@ public class MainActivity extends AppCompatActivity {
         Log.e("---", mTabLayout.getScrollX() + "");
     }
 
+    private void testNavigation(){
+        mNavTabLayout = findViewById(R.id.nav_tab_test);
+        mTabLayout = findViewById(R.id.tablayout_test_main_ac);
+        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        mTabLayout.setTabGravity(mTabLayout.GRAVITY_FILL);
+
+        for (int i = 0; i < 4; i++) {
+            mTabLayout.addTab(mTabLayout.newTab());
+        }
+
+        for (int i = 0; i < 4; i++) {
+            mTabLayout.getTabAt(i).setText("太薄" + i);
+        }
+
+        Option option = new Option.Builder().isShowIndicator(true).isShowIndicator(false).indicatorAlign(Option.INDICATOR_ALIGN_BOTTOM).gravity(Option.GRAVITY_CENTER).mode(Option.MODE_FIXED).build();
+        mNavTabLayout.setOption(option);
+        mTabLayout.setupWithViewPager(mViewPager, false);
+
+        AbsTabAdapter adapter = new AbsTabAdapter() {
+            @Override
+            public View getItemView(ViewGroup parent, int position, boolean isSelect) {
+                TextView textView = new TextView(MainActivity.this);
+                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(150, 50);
+                textView.setLayoutParams(params);
+                textView.setTextSize(14);
+                String color = isSelect ? "#ff4081" : "#2c3e50";
+                textView.setText(String.format("item%d", position));
+                textView.setTextColor(Color.parseColor(color));
+                return textView;
+            }
+
+            @Override
+            public void updateSelectPosition(View itemView, int newSelectPosition) {
+                if (itemView instanceof TextView) {
+                    TextView tv = (TextView) itemView;
+                    tv.setTextColor(Color.parseColor("#ff4081"));
+                }
+            }
+
+            @Override
+            public void updateUnSelectPosition(View itemView, int unSelectPosition) {
+                if (itemView instanceof TextView) {
+                    TextView tv = (TextView) itemView;
+                    tv.setTextColor(Color.parseColor("#2c3e50"));
+                }
+            }
+
+            @Override
+            public int getItemCount() {
+                return 4;
+            }
+        };
+        mNavTabLayout.setAdapter(adapter);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                mNavTabLayout.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mNavTabLayout.setSelectPosition(position);
+                mNavTabLayout.onPageSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
 
     private void testNavTabLayout() {
         mNavTabLayout = findViewById(R.id.nav_tab_test);
@@ -93,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             mTabLayout.getTabAt(i).setText("太薄" + i);
         }
 
-        Option option = new Option.Builder().isShowIndicator(true).indicatorAlign(Option.INDICATOR_ALIGN_TOP).gravity(Option.GRAVITY_FILL).mode(Option.MODE_SCROLLABLE).build();
+        Option option = new Option.Builder().isShowIndicator(true).indicatorAlign(Option.INDICATOR_ALIGN_BOTTOM).gravity(Option.GRAVITY_FILL).mode(Option.MODE_SCROLLABLE).build();
         mNavTabLayout.setOption(option);
         mTabLayout.setupWithViewPager(mViewPager, false);
 
@@ -101,8 +176,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View getItemView(ViewGroup parent, int position, boolean isSelect) {
                 TextView textView = new TextView(MainActivity.this);
-                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(150, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                params.setMargins(20, 0, 20, 0);
+                ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(150, 50);
                 textView.setLayoutParams(params);
                 textView.setTextSize(14);
                 String color = isSelect ? "#ff4081" : "#2c3e50";
@@ -115,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             public void updateSelectPosition(View itemView, int newSelectPosition) {
                 if (itemView instanceof TextView) {
                     TextView tv = (TextView) itemView;
-                    Log.e("---SelectPosition--",tv.getText()+"");
                     tv.setTextColor(Color.parseColor("#ff4081"));
                 }
             }
@@ -124,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
             public void updateUnSelectPosition(View itemView, int unSelectPosition) {
                 if (itemView instanceof TextView) {
                     TextView tv = (TextView) itemView;
-                    Log.e("---unSelectPosition--",tv.getText()+"");
                     tv.setTextColor(Color.parseColor("#2c3e50"));
                 }
             }
