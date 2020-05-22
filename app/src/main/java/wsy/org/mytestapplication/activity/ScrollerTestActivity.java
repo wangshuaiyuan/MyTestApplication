@@ -2,10 +2,9 @@ package wsy.org.mytestapplication.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.TextViewCompat;
+import androidx.annotation.Nullable;
+
 import android.view.View;
-import android.widget.OverScroller;
 import android.widget.TextView;
 
 import wsy.org.mytestapplication.R;

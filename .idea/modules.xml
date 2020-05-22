@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyTestApplication.iml" filepath="$PROJECT_DIR$/MyTestApplication.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/navtablayout/navtablayout.iml" filepath="$PROJECT_DIR$/navtablayout/navtablayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyTestApplication.iml" filepath="$PROJECT_DIR$/MyTestApplication.iml" group="MyTestApplication" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="MyTestApplication/app" />
+      <module fileurl="file://$PROJECT_DIR$/navtablayout/navtablayout.iml" filepath="$PROJECT_DIR$/navtablayout/navtablayout.iml" group="MyTestApplication/navtablayout" />
     </modules>
   </component>
 </project>

@@ -1,15 +1,15 @@
 package com.example.navtablayout.core;
 
-import android.support.annotation.ColorInt;
-import android.support.annotation.IntDef;
-import android.support.annotation.RestrictTo;
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
+import androidx.annotation.RestrictTo;
 
 import com.example.navtablayout.NavTabIndicator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 /**
  * Created by wsy on 26/11/2018

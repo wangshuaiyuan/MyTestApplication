@@ -42,6 +42,13 @@ public class StringContainsIgnoreCase {
             }
         }
 
+        String param = "a|b|c";
+        String[] params =  param.split("|");
+        for(String paramstr : params){
+            System.out.println(paramstr);
+        }
+
 
     }
+
 }

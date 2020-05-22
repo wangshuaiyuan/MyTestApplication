@@ -6,14 +6,12 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-
-import com.example.navtablayout.core.AnimationUtils;
-import com.example.navtablayout.core.Option;
 
 /**
  * Created by wsy on 22/10/2018
@@ -101,6 +99,7 @@ public class SlidingTabStrip extends LinearLayout {
      */
     public void setOption(@NonNull Option option) {
         mOption = option;
+        applyModeAndGravity();
     }
 
     @Override
@@ -167,9 +166,9 @@ public class SlidingTabStrip extends LinearLayout {
                 for (int i = 0; i < count; i++) {
                     final LinearLayout.LayoutParams lp =
                             (LayoutParams) getChildAt(i).getLayoutParams();
-                    if (lp.width != largestTabWidth || lp.weight != 1) {
+                    if (lp.width != largestTabWidth || lp.weight != 0) {
                         lp.width = largestTabWidth;
-                        lp.weight = 1;
+                        lp.weight = 0;
                         remeasure = true;
                     }
                 }
@@ -181,6 +180,15 @@ public class SlidingTabStrip extends LinearLayout {
             if (remeasure) {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
+        }
+    }
+
+
+    private void applyModeAndGravity() {
+        if (mOption.getMode() == Option.MODE_FIXED) {
+            setGravity(Gravity.CENTER_HORIZONTAL);
+        } else if (mOption.getMode() == Option.MODE_SCROLLABLE) {
+            setGravity(GravityCompat.START);
         }
     }
 

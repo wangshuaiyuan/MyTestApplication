@@ -2,6 +2,8 @@ package wsy.org.mytestapplication.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -127,6 +129,13 @@ public class HtmlStringTestActivity extends Activity {
                 Log.e("btn4top", findViewById(R.id.html_string_btn4).getTop() + "");
                 String totalMemoty = Utils.getTotalMemory(getBaseContext());
                 Log.e("totalMemoty", totalMemoty);
+
+
+                Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_VIEW);// 不确定
+                intent.setData(Uri.parse("qn2at72s9jb3xk://"));
+                startActivity(intent);
+
             }
         });
 

@@ -1,1 +1,2 @@
-include ':app', ':navtablayout'
+include ':app'
+include ':navtablayout'

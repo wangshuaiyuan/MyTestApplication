@@ -3,6 +3,7 @@ package wsy.org.mytestapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import wsy.org.mytestapplication.activity.TaskTestActivity;
 import wsy.org.mytestapplication.activity.WidthHeightWeightLayoutActivity;
 import wsy.org.mytestapplication.adapter.DemoListAdapter;
 import wsy.org.mytestapplication.bean.DemoItemBean;
+import wsy.org.timeshaft.TimerShaftItemActivity;
 
 /**
  * Created by wsy on 2016/10/10.
@@ -53,6 +55,11 @@ public class ListActivity extends Activity {
             }
         });
         Log.e("---", "oncreate");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -159,6 +166,12 @@ public class ListActivity extends Activity {
         itemBean.demoActivityClass = ScrollViewHeightActivity.class;
         itemBean.demoName = "scrollView高度测量bug";
         list.add(itemBean);
+
+        itemBean = new DemoItemBean();
+        itemBean.demoActivityClass = TimerShaftItemActivity.class;
+        itemBean.demoName = "时间轴";
+        list.add(itemBean);
+
         return list;
     }
 }

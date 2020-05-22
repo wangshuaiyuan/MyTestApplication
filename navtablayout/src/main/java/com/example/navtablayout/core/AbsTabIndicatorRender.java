@@ -2,8 +2,8 @@ package com.example.navtablayout.core;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 /**
  * Created by wsy on 02/11/2018

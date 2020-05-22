@@ -9,9 +9,15 @@ import android.app.Application;
 
 public class YashonApplication extends Application {
 
+    private static YashonApplication sInstance;
+
+    public static YashonApplication getInstance() {
+        return sInstance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        sInstance = this;
     }
-
 }

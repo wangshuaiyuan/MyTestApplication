@@ -3,9 +3,9 @@ package wsy.org.mytestapplication;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wsy.org.mytestapplication.activity.HtmlStringTestActivity;
+import wsy.org.mytestapplication.tool.CommandTool;
+import wsy.org.mytestapplication.tool.PermissionUtil;
 import wsy.org.mytestapplication.view.ScrollTestView;
 
 
@@ -60,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
         testScroll();
 
+        PermissionUtil.requestPermission(this, new PermissionUtil.CallBack() {
+            @Override
+            public void onSuccess() {
+                CommandTool.executeShellCommand("cat /proc/stat");
+            }
+        });
+
+
     }
 
     private void testScroll() {
@@ -94,9 +104,11 @@ public class MainActivity extends AppCompatActivity {
             mTabLayout.getTabAt(i).setText("太薄" + i);
         }
 
-        Option option = new Option.Builder().isShowIndicator(true).isShowIndicator(false).indicatorAlign(Option.INDICATOR_ALIGN_BOTTOM).gravity(Option.GRAVITY_CENTER).mode(Option.MODE_FIXED).build();
+        Option option = new Option.Builder().isShowIndicator(true).isShowIndicator(false).indicatorAlign(Option.INDICATOR_ALIGN_BOTTOM).gravity(Option.GRAVITY_FILL).mode(Option.MODE_FIXED).build();
         mNavTabLayout.setOption(option);
         mTabLayout.setupWithViewPager(mViewPager, false);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
 
         AbsTabAdapter adapter = new AbsTabAdapter() {
             @Override
